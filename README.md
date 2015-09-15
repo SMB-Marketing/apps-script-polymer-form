@@ -1,3 +1,10 @@
+## Firebase-AppsScript-Polymer-Marketing
+* example of integrating firebase with apps script and polymer to create a marketing form to collect emails
+* [Demo](https://script.google.com/macros/s/AKfycbyV5RgYuC0ldvPBwUMyXMr9xsu0VxoRc3S2vr9IkZDJBzlg0tcQ/exec)
+
+
+
+## based on polymer starter kit
 ![](https://cloud.githubusercontent.com/assets/110953/7877439/6a69d03e-0590-11e5-9fac-c614246606de.png) 
 ## Polymer Starter Kit
 
