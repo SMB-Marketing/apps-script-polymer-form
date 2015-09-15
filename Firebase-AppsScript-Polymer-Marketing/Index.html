@@ -1,0 +1,56 @@
+<!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
+<?!= HtmlService.createHtmlOutputFromFile('Stylesheet').getContent(); ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<base target="_top">
+<script src="https://smb-marketing.github.io/apps-script-polymer-form/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+<link rel="import" href="https://smb-marketing.github.io/apps-script-polymer-form/elements/elements.vulcanized.html">
+<link href='https://fonts.googleapis.com/css?family=Playfair+Display+SC:900italic' rel='stylesheet' type='text/css'>
+<script>
+function updateUrl(url) {
+var div = document.getElementById('output');
+document.getElementById('name').value='';
+document.getElementById('birthday').value='';
+document.getElementById('email').value='';
+//div.innerHTML = '<a href="' + url + '">1-Got it!</a>';
+div.innerHTML='Thanks!';
+setTimeout(function(){document.getElementById('output').innerHTML='';},2000);
+}
+</script>
+</head>
+<body bgcolor="#59ECFF">
+
+<h1 style="font-family: 'Playfair Display SC', serif; font-style: italic; font-weight: 900; font-size:xx-large; color: #FF6F00; ">YOUR COMPANY NAME</h1>
+
+<paper-material elevation="1">
+Stay In Touch With Us<br><br>
+We'd love to send you special deals and offers.<br><br>
+Please fill out the form below.
+</paper-material>
+
+<paper-material elevation="1">
+
+<form id="myForm">
+
+<paper-input name="name" id="name" label="your name"></paper-input><br>
+
+Your birthday (year is optional)<br>
+(On your birthday, you can qualify for a special discount!)<br>
+<input placeholder="birthday" name="birthday" id="birthday" type="date"><br>
+
+<gold-email-input name="email" id="email" label="your email address" auto-validate></gold-email-input><br>
+<input type="button" value="Submit"
+onclick="google.script.run
+.withSuccessHandler(updateUrl)
+.processForm(this.parentNode)" />
+</form>
+<div id="output"></div>
+
+</paper-material>
+
+</body>
+</html>
+
