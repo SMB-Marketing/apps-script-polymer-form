@@ -53,9 +53,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
   <!-- endreplace-->
+<link href='https://fonts.googleapis.com/css?family=Playfair+Display+SC:900italic' rel='stylesheet' type='text/css'>
 </head>
 
 <body unresolved class="fullbleed layout vertical">
+
+<paper-material elevation="1">
+<h1 style="font-family: 'Playfair Display SC', serif; font-style: italic; font-weight: 900; font-size:xx-large; color: #FF6F00; ">RunNYC - Keller Williams</h1>
+Commission Calculator<br><br>
+Please fill out the form below.
+</paper-material>
+
+<paper-material elevation="1">
+
+<form id="myForm">
+
+<paper-input name="name" id="name" label="your name"></paper-input><br>
+
+<gold-email-input name="email" id="email" label="your email address" auto-validate></gold-email-input><br>
+
+<paper-input name="agent_split_percentage" id="agent_split_percentage" label="your agent split percentage ex. 50" type="number"></paper-input><br>
+<paper-input name="other_fees_percentage" id="other_fees_percentage" label="your other fees percentage ex. 1" type="number"></paper-input><br>
+<paper-input name="annual_gross_commission" id="annual_gross_commission" label="your annual gross commission ex. 200000" type="number"></paper-input><br>
+
+
+<input type="button" value="Submit"
+onclick="google.script.run
+.withSuccessHandler(updateUrl)
+.processForm(this.parentNode)" />
+</form>
+<div id="output"></div>
+
+</paper-material>
+
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
 
