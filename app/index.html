@@ -16,7 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="Polymer Starter Kit" />
-  <title>Polymer Starter Kit</title>
+  <title>Commission Calculator</title>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
   <!-- Chrome for Android theme color -->
@@ -30,13 +30,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Polymer Starter Kit">
+  <meta name="application-name" content="Commission Calculator">
   <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
+  <meta name="apple-mobile-web-app-title" content="Commission Calculator">
   <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
   <!-- Tile icon for Win8 (144x144) -->
@@ -54,6 +54,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="import" href="elements/elements.html">
   <!-- endreplace-->
 <link href='https://fonts.googleapis.com/css?family=Playfair+Display+SC:900italic' rel='stylesheet' type='text/css'>
+<script>
+function updateUrl(url) {
+var div = document.getElementById('output');
+
+var body = calculate(
+undefined,
+//parseFloat(document.getElementById('annual_net_commission').value),
+
+parseFloat(document.getElementById('annual_gross_commission').value),
+parseFloat(document.getElementById('agent_split_percentage').value),
+parseFloat(document.getElementById('other_fees_percentage').value),
+document.getElementById('email').value);
+
+
+document.getElementById('name').value='';
+document.getElementById('email').value='';
+
+
+//div.innerHTML = '<a href="' + url + '">1-Got it!</a>';
+div.innerHTML='Thanks! ' + body;
+//setTimeout(function(){document.getElementById('output').innerHTML='';},2000);
+}
+
+function calculate(annual_net_commission,annual_gross_commission,agent_split_percentage,other_fees_percentage,email){
+  var body;
+  try{
+    
+    if (typeof(annual_net_commission) !== 'undefined' ){
+      annual_gross_commission = (annual_net_commission * 100 ) / (agent_split_percentage * (1 - other_fees_percentage/100)) ;
+      console.log('QQQ: annual_gross_commission: ' + annual_gross_commission);     
+    }
+    var adjusted_annual_gross_commission = annual_gross_commission - other_fees_percentage/100.0*annual_gross_commission;
+    
+    var KW_fee = Math.min(annual_gross_commission*.06,3000.0);
+    var KW_fee2 = Math.min(annual_gross_commission*.30,45000);
+    
+    var annual_net_commission_present_location = adjusted_annual_gross_commission * agent_split_percentage / 100.0;
+    var annual_net_commission_at_KW = annual_gross_commission - KW_fee - KW_fee2;
+    var difference_annual_net_commission = annual_net_commission_at_KW - annual_net_commission_present_location;
+    console.log('annual_net_commission_present_location:'+annual_net_commission_present_location);
+    console.log('annual_net_commission_at_KW:'+annual_net_commission_at_KW);
+    
+    body= email + ':<br>annual_gross_commission: $' + parseInt(annual_gross_commission) + '<br>annual_net_commission_present_location: $'+parseInt(annual_net_commission_present_location) +
+      '<br>annual_net_commission_at_KW: $'+parseInt(annual_net_commission_at_KW)+
+        '<br>other_fees_percentage: ' + other_fees_percentage +
+         '<br>agent_split_percentage: ' + agent_split_percentage ;
+    var subject='Commission Calculation for ' + email;
+    //MailApp.sendEmail('charles@runnyc.com', subject ,body);
+    //MailApp.sendEmail(email,subject, body);
+  } catch (e){
+    console.log('e2:'+ e);
+  }
+  return body;
+}
+</script>
 </head>
 
 <body unresolved class="fullbleed layout vertical">
@@ -100,7 +155,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <paper-icon-button icon="search"></paper-icon-button>
 
           <!-- Application name -->
-          <div class="middle paper-font-display2 app-name">Polymer Starter Kit</div>
+          <div class="middle paper-font-display2 app-name">Commission Calculator</div>
 
           <!-- Application sub title -->
           <div class="bottom title"></div>
@@ -149,10 +204,7 @@ Please fill out the form below.
 
 <input type="button" value="Submit"
 
-onclick="google.script.run
-.withSuccessHandler(updateUrl)
-.processForm(this.parentNode)" 
-/>
+onclick="updateUrl()" />
 </form>
 <div id="output"></div>
 
