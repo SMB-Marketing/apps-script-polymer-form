@@ -202,14 +202,14 @@ Please fill out the form below.
 
 <paper-input name="agent_split_percentage" id="agent_split_percentage" label="your agent split percentage ex. 50" type="number"></paper-input><br>
 <paper-input name="other_fees_percentage" id="other_fees_percentage" label="your other fees percentage ex. 1" type="number"></paper-input><br>
-<paper-input name="annual_gross_commission" id="annual_gross_commission" label="your annual gross commission ex. 200000" type="number"></paper-input><br>
+<paper-input onchange="updateUrl()" name="annual_gross_commission" id="annual_gross_commission" label="your annual gross commission ex. 200000" type="number"></paper-input><br>
 
 
 <input type="button" value="Submit"
 
 onclick="updateUrl()" />
 </form>
-<div id="output"></div>
+<paper-material id="output"></paper-material>
 
 </paper-material>
 <!--
