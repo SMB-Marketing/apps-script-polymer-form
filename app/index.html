@@ -112,6 +112,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
             <section data-route="home">
+              <paper-material elevation="1">
+                <my-greeting></my-greeting>
+
+                <paper-input label="your name"></paper-input>
+
+                <gold-email-input label="your email address" auto-validate></gold-email-input>
+
+                <p class="paper-font-subhead">You now have:</p>
+                <my-list></my-list>
+
+                <p class="paper-font-body2">Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
+              </paper-material>
+              <paper-material elevation="1">
+                <p class="paper-font-body2">This is another card.</p>
+              </paper-material>
+
 <paper-material elevation="1">
 <h1 style="font-family: 'Playfair Display SC', serif; font-style: italic; font-weight: 900; font-size:xx-large; color: #FF6F00; ">RunNYC - Keller Williams</h1>
 Commission Calculator<br><br>
@@ -141,21 +157,6 @@ onclick="google.script.run
 <div id="output"></div>
 
 </paper-material>
-              <paper-material elevation="1">
-                <my-greeting></my-greeting>
-
-                <paper-input label="your name"></paper-input>
-
-                <gold-email-input label="your email address" auto-validate></gold-email-input>
-
-                <p class="paper-font-subhead">You now have:</p>
-                <my-list></my-list>
-
-                <p class="paper-font-body2">Looking for more Web App layouts? Check out our <a href="https://github.com/PolymerElements/app-layout-templates">layouts</a> collection. You can also <a href="http://polymerelements.github.io/app-layout-templates/">preview</a> them live.</p>
-              </paper-material>
-              <paper-material elevation="1">
-                <p class="paper-font-body2">This is another card.</p>
-              </paper-material>
 
               <paper-material elevation="1" class="paper-font-body2">
                 <h1 id="license">License</h1>
