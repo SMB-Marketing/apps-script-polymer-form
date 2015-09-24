@@ -141,6 +141,10 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
                 <iron-icon icon="mail"></iron-icon>
                 <span>Contact</span>
               </a>
+              <a data-route="firebase" href="/firebase">
+                <iron-icon icon="mail"></iron-icon>
+                <span>Firebase</span>
+              </a>
           </paper-menu>
       </div>
       <paper-header-panel main mode="waterfall-tall">
@@ -256,6 +260,24 @@ onclick="updateUrl()" />
               <paper-material elevation="1">
                 <h2 class="paper-font-display2">Contact</h2>
                 <p>This is the contact section</p>
+              </paper-material>
+            </section>
+
+            <section data-route="firebase">
+              <paper-material elevation="1">
+<!-- -->
+ <template is="dom-bind">
+    <firebase-collection
+      order-by-child="height"
+      limit-to-first="3"
+      location="https://dinosaur-facts.firebaseio.com/dinosaurs"
+      data="{{dinosaurs}}"></firebase-collection>
+    <template is="dom-repeat" items="[[dinosaurs]]" as="dinosaur">
+      <h4>[[dinosaur.__firebaseKey__]]</h4>
+      <span>Height: </span><span>[[dinosaur.height]]</span><span>m</span>
+    </template>
+  </template>
+  <!-- -->
               </paper-material>
             </section>
 

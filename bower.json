@@ -1,7 +1,8 @@
 {
-  "name": "polymer-starter-kit",
+  "name": "marketing-polymer-starter-kit",
   "private": true,
   "dependencies": {
+    "firebase-element": "GoogleWebComponents/firebase-element#~1.0.6",
     "gold-email-input": "PolymerElements/gold-email-input#~1.0.4",
     "iron-elements": "PolymerElements/iron-elements#1.0.0",
     "neon-elements": "PolymerElements/neon-elements#1.0.0",
