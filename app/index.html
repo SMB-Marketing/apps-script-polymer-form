@@ -106,6 +106,7 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
   } catch (e){
     console.log('e2:'+ e);
   }
+  ref.child("users").child(authData.uid).push({"messages" : body });
   return body;
 }
 </script>
@@ -161,6 +162,8 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
           <!-- Application name -->
           <div class="middle paper-font-display2 app-name">Commission Calculator</div>
 
+            <input type="button" value="Login" onclick="login()" />
+
           <!-- Application sub title -->
           <div class="bottom title"></div>
 
@@ -209,11 +212,10 @@ Please fill out the form below.
 <paper-input onchange="updateUrl()" name="annual_gross_commission" id="annual_gross_commission" label="your annual gross commission ex. 200000" type="number"></paper-input><br>
 
 
-<input type="button" value="Submit"
-
-onclick="updateUrl()" />
+<input type="button" value="Submit" onclick="updateUrl()" />
 </form>
 <paper-material id="output"></paper-material>
+<paper-material id="output-history"></paper-material>
 
 </paper-material>
 <!--
@@ -265,7 +267,7 @@ onclick="updateUrl()" />
 
             <section data-route="firebase">
               <paper-material elevation="1">
-<!-- -->
+<!--
  <template is="dom-bind">
     <firebase-collection
       order-by-child="height"
@@ -277,7 +279,18 @@ onclick="updateUrl()" />
       <span>Height: </span><span>[[dinosaur.height]]</span><span>m</span>
     </template>
   </template>
-  <!-- -->
+   -->
+ <template is="dom-bind">
+    <firebase-collection
+      order-by-child="height"
+      limit-to-first="3"
+      location="https://runnyc.firebaseio.com/users"
+      data="{{messages}}"></firebase-collection>
+    <template is="dom-repeat" items="[[messages]]" as="message">
+      <h4>[[message.__firebaseKey__]]</h4>
+      <span></span><span>[[message]]</span><span>m</span>
+    </template>
+  </template>
               </paper-material>
             </section>
 
@@ -305,6 +318,38 @@ onclick="updateUrl()" />
   <!-- build:js scripts/app.js -->
   <script src="scripts/app.js"></script>
   <!-- endbuild-->
+  <script>
+var ref = new Firebase("https://runnyc.firebaseio.com");
+var authData;
+
+ref.onAuth(function(authDataparm) {
+  if (authDataparm) {
+    authData=authDataparm;
+    console.log("Authenticated with uid:", authData.uid);
+    ref.child("users").child(authData.uid).limitToLast(10).on("child_added", function(snapshot, prevChildKey) {
+        var newPost = snapshot.val();
+        console.log(newPost);
+        var div = document.getElementById('output-history');
+        div.innerHTML += JSON.stringify(newPost)+'<hr>';
+    });
+
+  } else {
+    console.log("Client unauthenticated.")
+  }
+});
+
+function login(){
+ref.authWithOAuthPopup("facebook", function(error, authDataparm) {
+  if (error) {
+    console.log("Login Failed!", error);
+  } else {
+    console.log("Authenticated successfully with payload:", authData);
+    authData = authDataparm;
+  }
+});
+}
+  </script>
+
 </body>
 
 </html>

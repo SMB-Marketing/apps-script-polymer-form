@@ -1,7 +1,8 @@
 {
     "rules": {
-        ".read": true,
-        ".write": true,
+        // By default, make all data private unless specified otherwise.
+        ".read": false,
+        ".write": false,
         "users": {
       "$uid": {
         ".read": "auth !== null && auth.uid === $uid",
