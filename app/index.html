@@ -65,7 +65,9 @@ undefined,
 parseFloat(document.getElementById('annual_gross_commission').value),
 parseFloat(document.getElementById('agent_split_percentage').value),
 parseFloat(document.getElementById('other_fees_percentage').value),
-document.getElementById('email').value);
+document.getElementById('email').value,
+document.getElementById('name').value
+);
 
 
 document.getElementById('name').value='';
@@ -77,7 +79,7 @@ div.innerHTML='Thanks! ' + body;
 //setTimeout(function(){document.getElementById('output').innerHTML='';},2000);
 }
 
-function calculate(annual_net_commission,annual_gross_commission,agent_split_percentage,other_fees_percentage,email){
+function calculate(annual_net_commission,annual_gross_commission,agent_split_percentage,other_fees_percentage,email,name){
   var body;
   try{
     
@@ -106,7 +108,21 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
   } catch (e){
     console.log('e2:'+ e);
   }
-  ref.child("users").child(authData.uid).push({"messages" : body });
+  //ref.child("users").child(authData.uid).push({"messages" : {"created": Firebase.ServerValue.TIMESTAMP, "body": body }});
+
+  //ref.child("users").child(authData.uid).push({"messages" : {"created": Firebase.ServerValue.TIMESTAMP, "body": body }});
+  ref.child("users").child(authData.uid).push({
+      "messages": {
+          "created": Firebase.ServerValue.TIMESTAMP,
+          "name": name,
+          "email": email,
+          "annual_gross_commission": parseInt(annual_gross_commission),
+          "annual_net_commission_present_location": parseInt(annual_net_commission_present_location),
+          "annual_net_commission_at_KW": parseInt(annual_net_commission_at_KW),
+          "other_fees_percentage": other_fees_percentage,
+          "agent_split_percentage": agent_split_percentage
+      }
+  });
   return body;
 }
 </script>
@@ -215,7 +231,9 @@ Please fill out the form below.
 <input type="button" value="Submit" onclick="updateUrl()" />
 </form>
 <paper-material id="output"></paper-material>
-<paper-material id="output-history"></paper-material>
+<paper-material><h1>History</h1>
+<div id="output-history"></div>
+</paper-material>
 
 </paper-material>
 <!--
@@ -330,7 +348,14 @@ ref.onAuth(function(authDataparm) {
         var newPost = snapshot.val();
         console.log(newPost);
         var div = document.getElementById('output-history');
-        div.innerHTML += JSON.stringify(newPost)+'<hr>';
+        //div.innerHTML += JSON.stringify(newPost)+'<hr>';
+        div.innerHTML += 
+        'commission (KW): ' + newPost.messages.annual_net_commission_at_KW+
+        '<br>commission (present): ' + newPost.messages.annual_net_commission_present_location+
+        '<br>annual gross commission (present): ' + newPost.messages.annual_gross_commission+
+        '<br>other fees percentage (present): ' + newPost.messages.other_fees_percentage+
+        '<br>agent split percentage (present): ' + newPost.messages.agent_split_percentage+
+        '<hr>';
     });
 
   } else {
