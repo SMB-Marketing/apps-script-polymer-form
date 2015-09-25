@@ -59,8 +59,8 @@ function updateUrl(url) {
 var div = document.getElementById('output');
 
 var body = calculate(
-undefined,
-//parseFloat(document.getElementById('annual_net_commission').value),
+//undefined,
+parseFloat(document.getElementById('annual_net_commission').value),
 
 parseFloat(document.getElementById('annual_gross_commission').value),
 parseFloat(document.getElementById('agent_split_percentage').value),
@@ -83,9 +83,10 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
   var body;
   try{
     
-    if (typeof(annual_net_commission) !== 'undefined' ){
+    if (typeof(annual_net_commission) !== 'undefined'
+        && !isNaN(annual_net_commission) ){
       annual_gross_commission = (annual_net_commission * 100 ) / (agent_split_percentage * (1 - other_fees_percentage/100)) ;
-      console.log('QQQ: annual_gross_commission: ' + annual_gross_commission);     
+      //console.log('QQQ: annual_gross_commission: ' + annual_gross_commission);     
     }
     var adjusted_annual_gross_commission = annual_gross_commission - other_fees_percentage/100.0*annual_gross_commission;
     
@@ -95,8 +96,8 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
     var annual_net_commission_present_location = adjusted_annual_gross_commission * agent_split_percentage / 100.0;
     var annual_net_commission_at_KW = annual_gross_commission - KW_fee - KW_fee2;
     var difference_annual_net_commission = annual_net_commission_at_KW - annual_net_commission_present_location;
-    console.log('annual_net_commission_present_location:'+annual_net_commission_present_location);
-    console.log('annual_net_commission_at_KW:'+annual_net_commission_at_KW);
+    //console.log('annual_net_commission_present_location:'+annual_net_commission_present_location);
+    //console.log('annual_net_commission_at_KW:'+annual_net_commission_at_KW);
     
     body= email + ':<br>annual_gross_commission: $' + parseInt(annual_gross_commission) + '<br>annual_net_commission_present_location: $'+parseInt(annual_net_commission_present_location) +
       '<br>annual_net_commission_at_KW: $'+parseInt(annual_net_commission_at_KW)+
@@ -106,12 +107,27 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
     //MailApp.sendEmail('charles@runnyc.com', subject ,body);
     //MailApp.sendEmail(email,subject, body);
   } catch (e){
-    console.log('e2:'+ e);
+    //console.log('e2:'+ e);
   }
   //ref.child("users").child(authData.uid).push({"messages" : {"created": Firebase.ServerValue.TIMESTAMP, "body": body }});
 
   //ref.child("users").child(authData.uid).push({"messages" : {"created": Firebase.ServerValue.TIMESTAMP, "body": body }});
-  ref.child("users").child(authData.uid).push({
+  newPost = 
+  {
+      "messages": {
+          "name": name,
+          "email": email,
+          "annual_gross_commission": parseInt(annual_gross_commission),
+          "annual_net_commission_present_location": parseInt(annual_net_commission_present_location),
+          "annual_net_commission_at_KW": parseInt(annual_net_commission_at_KW),
+          "other_fees_percentage": other_fees_percentage,
+          "agent_split_percentage": agent_split_percentage
+      }
+  };
+  if (typeof authData !== "undefined"){
+  //if (typeof authData.uid !== "undefined"){
+  ref.child("users").child(authData.uid).push(
+  {
       "messages": {
           "created": Firebase.ServerValue.TIMESTAMP,
           "name": name,
@@ -122,8 +138,11 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
           "other_fees_percentage": other_fees_percentage,
           "agent_split_percentage": agent_split_percentage
       }
-  });
-  return body;
+  }
+  );
+  }
+  //return body;
+  return buildItem(newPost);
 }
 </script>
 </head>
@@ -226,6 +245,7 @@ Please fill out the form below.
 <paper-input name="agent_split_percentage" id="agent_split_percentage" label="your agent split percentage ex. 50" type="number"></paper-input><br>
 <paper-input name="other_fees_percentage" id="other_fees_percentage" label="your other fees percentage ex. 1" type="number"></paper-input><br>
 <paper-input onchange="updateUrl()" name="annual_gross_commission" id="annual_gross_commission" label="your annual gross commission ex. 200000" type="number"></paper-input><br>
+<paper-input onchange="updateUrl()" name="annual_net_commission" id="annual_net_commission" label="(if you don't know gross) enter your annual net commission ex. 150000" type="number"></paper-input><br>
 
 
 <input type="button" value="Submit" onclick="updateUrl()" />
@@ -339,22 +359,52 @@ Please fill out the form below.
   <script>
 var ref = new Firebase("https://runnyc.firebaseio.com");
 var authData;
+function buildItem(newPost){
+        var item= '<div class="row"><div class="cell">commission (KW): </div><div class="cell number">' +  newPost.messages.annual_net_commission_at_KW.toLocaleString() +'</div></div>' + 
+        '<div class="row"><div class="cell">commission (present): </div><div class="cell number">' +  newPost.messages.annual_net_commission_present_location.toLocaleString() +'</div></div>' + 
+        '<div class="row"><div class="cell">annual gross commission (present): </div><div class="cell number">' +  newPost.messages.annual_gross_commission.toLocaleString() +'</div></div>' + 
+        '<div class="row"><div class="cell">other fees percentage (present): </div><div class="cell number">' +  newPost.messages.other_fees_percentage +'</div></div>' + 
+        '<div class="row"><div class="cell">agent split percentage (present): </div><div class="cell number">' +  newPost.messages.agent_split_percentage +'</div></div>' + 
+        '<div class="row"><div class="cell">name: </div><div class="cell">' +  newPost.messages.name +'</div></div>' + 
+        '<div class="row"><div class="cell">email: </div><div class="cell">' +  newPost.messages.email +'</div></div>' ;
+        if ( typeof newPost.messages.created !== 'undefined'){
+
+        item +='<div class="row"><div class="cell">created: </div><div class="cell">' +  new Date(newPost.messages.created) +'</div></div>';
+        }
+        item += '<hr>';
+        return item;
+}
 
 ref.onAuth(function(authDataparm) {
   if (authDataparm) {
     authData=authDataparm;
-    console.log("Authenticated with uid:", authData.uid);
+    //console.log("Authenticated with uid:", authData.uid);
     ref.child("users").child(authData.uid).limitToLast(10).on("child_added", function(snapshot, prevChildKey) {
         var newPost = snapshot.val();
-        console.log(newPost);
+        //console.log(newPost);
         var div = document.getElementById('output-history');
         //div.innerHTML += JSON.stringify(newPost)+'<hr>';
+        /*
         div.innerHTML += 
         'commission (KW): ' + newPost.messages.annual_net_commission_at_KW+
-        '<br>commission (present): ' + newPost.messages.annual_net_commission_present_location+
-        '<br>annual gross commission (present): ' + newPost.messages.annual_gross_commission+
+        '<br>commission (present): ' + newPost.messages.annual_net_commission_present_location.toLocaleString()+
+        '<br>annual gross commission (present): ' + newPost.messages.annual_gross_commission.toLocaleString()+
         '<br>other fees percentage (present): ' + newPost.messages.other_fees_percentage+
         '<br>agent split percentage (present): ' + newPost.messages.agent_split_percentage+
+        '<br>created: ' + new Date(newPost.messages.created)+
+        '<hr>';
+        */
+        div.innerHTML += 
+        buildItem(newPost);
+
+        '<div class="row"><div class="cell">commission (KW): </div><div class="cell">' +  newPost.messages.annual_net_commission_at_KW.toLocaleString() +'</div></div>' + 
+        '<div class="row"><div class="cell">commission (present): </div><div class="cell">' +  newPost.messages.annual_net_commission_present_location.toLocaleString() +'</div></div>' + 
+        '<div class="row"><div class="cell">annual gross commission (present): </div><div class="cell">' +  newPost.messages.annual_gross_commission.toLocaleString() +'</div></div>' + 
+        '<div class="row"><div class="cell">other fees percentage (present): </div><div class="cell">' +  newPost.messages.other_fees_percentage +'</div></div>' + 
+        '<div class="row"><div class="cell">agent split percentage (present): </div><div class="cell">' +  newPost.messages.agent_split_percentage +'</div></div>' + 
+        '<div class="row"><div class="cell">name: </div><div class="cell">' +  newPost.messages.name +'</div></div>' + 
+        '<div class="row"><div class="cell">email: </div><div class="cell">' +  newPost.messages.email +'</div></div>' + 
+        '<div class="row"><div class="cell">created: </div><div class="cell">' +  new Date(newPost.messages.created) +'</div></div>' + 
         '<hr>';
     });
 
