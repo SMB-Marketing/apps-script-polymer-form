@@ -197,7 +197,9 @@ function calculate(annual_net_commission,annual_gross_commission,agent_split_per
           <!-- Application name -->
           <div class="middle paper-font-display2 app-name">Commission Calculator</div>
 
+<div id="account-x">
             <input type="button" value="Login" onclick="login()" />
+</div>
 
           <!-- Application sub title -->
           <div class="bottom title"></div>
@@ -375,50 +377,50 @@ function buildItem(newPost){
         return item;
 }
 
-ref.onAuth(function(authDataparm) {
-  if (authDataparm) {
-    authData=authDataparm;
-    //console.log("Authenticated with uid:", authData.uid);
-    ref.child("users").child(authData.uid).limitToLast(10).on("child_added", function(snapshot, prevChildKey) {
-        var newPost = snapshot.val();
-        //console.log(newPost);
-        var div = document.getElementById('output-history');
-        //div.innerHTML += JSON.stringify(newPost)+'<hr>';
-        /*
-        div.innerHTML += 
-        'commission (KW): ' + newPost.messages.annual_net_commission_at_KW+
-        '<br>commission (present): ' + newPost.messages.annual_net_commission_present_location.toLocaleString()+
-        '<br>annual gross commission (present): ' + newPost.messages.annual_gross_commission.toLocaleString()+
-        '<br>other fees percentage (present): ' + newPost.messages.other_fees_percentage+
-        '<br>agent split percentage (present): ' + newPost.messages.agent_split_percentage+
-        '<br>created: ' + new Date(newPost.messages.created)+
-        '<hr>';
-        */
-        div.innerHTML += 
-        buildItem(newPost);
+     window.addEventListener('WebComponentsReady', function(e) {
+         ref.onAuth(function(authDataparm) {
+             if (authDataparm) {
+                 authData = authDataparm;
+                 if (authData.provider === 'facebook') {
+                     document.getElementById('account-x').innerHTML = 
+                     '<img src="' + authData.facebook.profileImageURL + '"><br>'+
+                     '<input type="button" value="Logout" onclick="logout()" /><br>' + 
+                     authData.facebook.displayName;
+                 }
+                 ref.child("users").child(authData.uid).limitToLast(10).on("child_added", function(snapshot, prevChildKey) {
+                     var newPost = snapshot.val();
+                     var div = document.getElementById('output-history');
+                     div.innerHTML +=
+                         buildItem(newPost);
 
-        '<div class="row"><div class="cell">commission (KW): </div><div class="cell">' +  newPost.messages.annual_net_commission_at_KW.toLocaleString() +'</div></div>' + 
-        '<div class="row"><div class="cell">commission (present): </div><div class="cell">' +  newPost.messages.annual_net_commission_present_location.toLocaleString() +'</div></div>' + 
-        '<div class="row"><div class="cell">annual gross commission (present): </div><div class="cell">' +  newPost.messages.annual_gross_commission.toLocaleString() +'</div></div>' + 
-        '<div class="row"><div class="cell">other fees percentage (present): </div><div class="cell">' +  newPost.messages.other_fees_percentage +'</div></div>' + 
-        '<div class="row"><div class="cell">agent split percentage (present): </div><div class="cell">' +  newPost.messages.agent_split_percentage +'</div></div>' + 
-        '<div class="row"><div class="cell">name: </div><div class="cell">' +  newPost.messages.name +'</div></div>' + 
-        '<div class="row"><div class="cell">email: </div><div class="cell">' +  newPost.messages.email +'</div></div>' + 
-        '<div class="row"><div class="cell">created: </div><div class="cell">' +  new Date(newPost.messages.created) +'</div></div>' + 
-        '<hr>';
-    });
+                     '<div class="row"><div class="cell">commission (KW): </div><div class="cell">' + newPost.messages.annual_net_commission_at_KW.toLocaleString() + '</div></div>' +
+                         '<div class="row"><div class="cell">commission (present): </div><div class="cell">' + newPost.messages.annual_net_commission_present_location.toLocaleString() + '</div></div>' +
+                         '<div class="row"><div class="cell">annual gross commission (present): </div><div class="cell">' + newPost.messages.annual_gross_commission.toLocaleString() + '</div></div>' +
+                         '<div class="row"><div class="cell">other fees percentage (present): </div><div class="cell">' + newPost.messages.other_fees_percentage + '</div></div>' +
+                         '<div class="row"><div class="cell">agent split percentage (present): </div><div class="cell">' + newPost.messages.agent_split_percentage + '</div></div>' +
+                         '<div class="row"><div class="cell">name: </div><div class="cell">' + newPost.messages.name + '</div></div>' +
+                         '<div class="row"><div class="cell">email: </div><div class="cell">' + newPost.messages.email + '</div></div>' +
+                         '<div class="row"><div class="cell">created: </div><div class="cell">' + new Date(newPost.messages.created) + '</div></div>' +
+                         '<hr>';
+                 });
 
-  } else {
-    console.log("Client unauthenticated.")
-  }
-});
+             } else {
+                 //console.log("Client unauthenticated.")
+                 document.getElementById('account-x').innerHTML = '<input type="button" value="Login" onclick="login()" />';
 
+             }
+         });
+     });
+
+function logout(){
+ref.unauth();
+}
 function login(){
 ref.authWithOAuthPopup("facebook", function(error, authDataparm) {
   if (error) {
-    console.log("Login Failed!", error);
+    alert("Login Failed!", error);
   } else {
-    console.log("Authenticated successfully with payload:", authData);
+    //console.log("Authenticated successfully with payload:", authData);
     authData = authDataparm;
   }
 });

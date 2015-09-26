@@ -16,3 +16,4 @@ body {
 .row { display: table-row; }
 .cell { display: table-cell; }
 .number { text-align: right; }
+#account-x { display: flex; flex-direction: column; flex-wrap: wrap; justify-content: center; align-items: center;}
